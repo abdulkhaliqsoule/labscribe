@@ -1,0 +1,222 @@
+LabScribe 2.4
+What changed since 2.3
+
+
+THE REPORT THAT WENT MISSING
+----------------------------
+When one patient arrived as two files — the chemistry on one, the glycated
+haemoglobin on the other — LabScribe read both, but wrote both reports to the
+same name. The file name is built from the path number and the patient's
+name, and both files carried the same patient, so the second report wrote
+silently over the first. One of the two was simply not there afterwards, and
+nothing said so.
+
+It was never a reading problem. Both files always parsed.
+
+Two files carrying the same patient now print as ONE report, with the
+chemistry sections and the glycated haemoglobin on it together, under a
+single header.
+
+
+HOW IT DECIDES
+--------------
+By the patient's name, and nothing else. The two printouts routinely carry
+different sample numbers and different dates when the chemistry and the
+glycated haemoglobin were run as separate jobs, so neither can be used.
+Punctuation, spacing and the order of the names are ignored, so
+"BOATENG, ADWOA SAMPLE" and "Adwoa Sample Boateng" are recognised as one person.
+A file with no name on it is never joined to anything.
+
+You can see it before you press Generate:
+
+  · The file list marks the joined files "one report, 1 of 2".
+  · The count above the list reads "2 of 2 ready · 1 report".
+  · The button reads "Generate report", not "Generate 2 reports".
+  · Under the patient boxes a line says which file this one is joined to,
+    with a tick box, "Report this file on its own", beside it. Tick it and
+    the two are parted again.
+
+Correcting any of the six patient boxes now corrects them on every file in
+the group, since they share one report and one printed header.
+
+To turn the joining off altogether, set MERGE_SAME_PATIENT to False near the
+top of LabScribe.py.
+
+
+WHAT A MERGED REPORT SAYS
+-------------------------
+PATH. NO and SPECIMEN DATE are taken from the chemistry printout, which is
+the one the laboratory files the request under.
+
+SPECIMEN names both samples — "SERUM / WHOLE BLOOD" — rather than claiming
+the whole report came off one of them. The wording is MERGED_SPECIMEN_JOIN
+near the top of the file.
+
+A test that was run on both printouts prints once, with the chemistry
+figure. The glycated haemoglobin is still cut down to the single NGSP
+percentage, however many files it arrived across.
+
+OTHER INVESTIGATIONS is now left off only a glycated haemoglobin report that
+has nothing else on it. On a merged report that section is holding real
+chemistry results with nowhere else to go, so it stays. A glycated
+haemoglobin on its own is the same single clean page it always was.
+
+
+TWO REPORTS CAN NO LONGER SHARE A NAME
+--------------------------------------
+Whatever else happens, two reports written in the same run are never given
+the same file name. The second is given a number — _2, _3 — instead of being
+allowed to write over the first. Names left over from earlier runs are not
+counted, so generating the same work again still replaces it as before.
+
+
+THE eGFR NOW FOLLOWS THE AGE YOU TYPE
+-------------------------------------
+The eGFR was worked out once, when the file was read, from the age and sex
+the analyser printed. If you then corrected the age or the sex in the window
+— which the readme tells you to do — the report still carried the figure
+from the wrong age.
+
+It is now worked out again at the moment the report is written, from the age
+and sex as they finally stand. An eGFR the analyser itself printed is still
+left alone.
+
+
+ONE SECTION TO A PAGE
+---------------------
+The lipid profile and the glycated haemoglobin were being printed on the same
+sheet whenever both happened to fit. Every section now starts a fresh page —
+renal, liver, lipid, glycated haemoglobin, uric acid, other investigations.
+The patient header is drawn on every page, so a page handed over on its own
+still says whose results it is carrying.
+
+A glycated haemoglobin on its own is still a single page, as it always was.
+
+To go back to packing as many sections onto a page as fit, set
+SECTION_PER_PAGE to False near the top of LabScribe.py.
+
+
+WHEN A FILE WILL NOT READ
+-------------------------
+"Could not be read" told you nothing. Clicking a failed file now shows what
+actually happened to it:
+
+  · How many pages there are, and how much text was found on them.
+  · Which of the three readers LabScribe tried.
+  · How many rows it found, and — when it found none — the rows that looked
+    like tests but had no number beside them, so you can see what it nearly
+    recognised.
+  · What to try, written for whoever is standing at the bench.
+
+It tells a scan apart from a printout. A file with no text but a picture on
+it says so plainly: the numbers are pixels, not text, and it has to be
+exported from the analyser again rather than scanned.
+
+Two buttons sit under the explanation:
+
+  Show the text LabScribe found   Exactly what was pulled off the file.
+  Copy this for support           The whole diagnosis and the raw text, on
+                                  the clipboard, ready to paste into an
+                                  email. That is the fastest way to get a new
+                                  layout added.
+
+
+CODES LABSCRIBE DOES NOT KNOW
+-----------------------------
+A code that is not in TEST_CODE_MAP still prints, under OTHER INVESTIGATIONS,
+as it always did — but it was left for someone to notice on the finished
+report. The codes on a file that LabScribe does not recognise are now named
+under the results table, so you can see them before anything prints and add
+them to TEST_CODE_MAP to give them a section of their own.
+
+
+THE WINDOW
+----------
+Redrawn throughout. The layout and the way it is worked are unchanged —
+files on the left, details and results on the right, Generate at the bottom
+— but every measurement in it was reset.
+
+  · One spacing scale and one type scale. Every gap in the window is now one
+    of six numbers and every piece of lettering one of ten faces. The window
+    had been padded by whatever looked right at the time — 11 here, 14 there
+    — and the eye reads that unevenness as carelessness without being able
+    to say why.
+  · The six patient boxes sit three across and two down, with the label
+    above each box rather than beside it. They get their full width, and
+    read as one block instead of twelve scattered things.
+  · The file list is now the same kind of table as the results, with the same
+    row height and the same thin scrollbar. The two are read the same way and
+    now look the same.
+  · The panel files are dropped onto has a dashed edge, which is what people
+    already read as "put something here". It lights up as a file crosses it.
+  · The bar along the bottom is anchored to the bottom of the window. It used
+    to be the part that got squeezed off the screen when a long results table
+    made the middle grow — and the part that must never disappear is the one
+    with Generate on it.
+  · Before anything is added, the right-hand panel shows the three steps
+    instead of an empty table. It is the screen the laboratory opens on every
+    morning.
+  · The Generate button says why it cannot be pressed — nothing added yet,
+    still reading, or none of the files could be read. Remove and Clear all
+    turn off when there is nothing to remove or clear.
+  · The status line tints for a moment when its message changes, so a change
+    is not missed. The progress bar appears only while something is being
+    written, rather than sitting there empty.
+  · A row in the results table lights under the pointer, so the eye can
+    follow one test across to its reference interval.
+  · The window opens at the size and position it was closed at, unless that
+    is no longer on the screen. A settings box can no longer open with its
+    Close button below the bottom of the screen.
+
+All six styles were checked pair by pair for contrast — text on cards, text
+on rows, flags, hints, the focus ring. The faint grey used for the small
+capitals was too pale to read in four of them and has been darkened.
+
+
+WHERE THE REPORTS ARE SAVED
+---------------------------
+Each report is now written into the same folder as the analyser file it was
+read from. A day's work stays together, and nothing has to be chosen before
+pressing Generate.
+
+The tick box beside "SAVE REPORTS TO" controls it, and it is on to begin
+with. Untick it and the folder box comes back to life, and everything in the
+run goes to the one folder you name there — which is how 2.3 behaved. The
+choice is remembered.
+
+Where files from two different folders are added in one go, each report goes
+beside its own source. Two reports can still never be given the same name,
+and the names are now kept per folder, since two reports in different folders
+may share a name quite legitimately.
+
+
+DRAGGING FILES ONTO THE WINDOW
+------------------------------
+Dropping only counted if it landed inside the dashed panel, which is a fiddly
+thing to ask of anyone holding a file over a window — and most of a miss
+looks exactly like drag-and-drop being broken. The whole window now takes a
+dropped file. The panel just lights up to say where they will go.
+
+Drop a folder and the PDFs inside it are added.
+
+Several files dropped together are taken apart the way Tcl wrote them, so a
+file with a space in its name no longer takes its neighbour with it.
+
+And when dragging genuinely is not available — which in a packaged build
+means the drag-and-drop library was not bundled with the program — the panel
+says so instead of quietly turning into a click-only box, and Help > About
+gives the reason it reported.
+
+
+THE COMMAND LINE
+----------------
+It now takes more than one PDF at a time, and joins them by the same rule:
+
+    python LabScribe.py "CHE901.pdf" "CHE640.pdf"
+
+
+REBUILDING
+----------
+Nothing about the build has changed. Rename LabScribe_2.4.py to LabScribe.py
+when you are satisfied with it, and build as before. 2.3 is untouched, so
+you can go back to it at any point.

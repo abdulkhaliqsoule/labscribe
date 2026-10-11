@@ -1,0 +1,154 @@
+LabScribe
+Clinical chemistry reporting, Ngleshie Amanfrom Polyclinic Laboratory
+Version 2.3
+Built by McLovin Software Solutions
+abdulkhaliqsoule@gmail.com   +233 20 960 0338
+
+
+WHAT IS IN THIS FOLDER
+----------------------
+LabScribe.exe            The program itself. Nothing else is needed to run it.
+Install LabScribe.bat    Optional. Puts LabScribe in your Start menu and on
+                         your Desktop.
+LabScribe.py             The source, kept so the reference intervals and the
+                         report layout can be changed later.
+sample_renal_liver_lipid.pdf   Example output: renal, liver and lipid.
+sample_hba1c.pdf               Example output: glycated haemoglobin.
+
+
+INSTALLING
+----------
+There is nothing to install first. LabScribe carries Python, the PDF reader
+and the report engine inside itself, so it runs on any Windows 10 or 11 PC
+with nothing else added.
+
+  Simplest        Double-click LabScribe.exe. That is all.
+  Tidier          Double-click "Install LabScribe.bat". It copies the program
+                  into your own programs folder and makes a Desktop icon and
+                  a Start menu entry.
+  On another PC   Copy LabScribe.exe onto a USB stick and run it there.
+
+THE FIRST TIME YOU OPEN IT
+Windows may show a blue box saying "Windows protected your PC". This appears
+for any program not signed with a paid certificate. Click "More info", then
+"Run anyway". Windows will not ask again on that computer.
+
+
+USING IT
+--------
+1. Add the analyser PDFs. Drag them onto the window, or press Add.
+   Each one is read straight away and appears in the list on the left:
+       ✓  read and ready
+       !  could not be read, click it to see why
+
+2. Select a file. The patient details LabScribe worked out from it appear at
+   the top right, and everything it read from the file appears underneath.
+   Check both. Correct any of the six patient boxes by typing in them, and
+   the correction is kept for that file.
+
+3. Choose where the reports should be saved, then press Generate.
+   One PDF per patient, named from the path number and the patient's name.
+
+
+COMMENTS PRINTED ON A REPORT
+----------------------------
+The eGFR comment prints under the eGFR row on every renal report, in the
+laboratory's own wording.
+
+A triglyceride above 4.5 mmol/L adds a comment under the lipid table about
+the calculated LDL and a possible lipaemic sample. Below that figure nothing
+is added.
+
+Both are in LabScribe.py: EGFR_NOTE and TG_NOTE hold the wording, and the
+figure that triggers the triglyceride one is the "above" number in
+SECTION_COMMENTS just under them. Change the words or the figure there and
+build the program again.
+
+
+WHAT IT WORKS OUT FOR ITSELF
+----------------------------
+· Analyser short codes become full test names (T-bil, γ-GT, CREA and so on)
+· eGFR, from the creatinine, using the CKD-EPI 2021 equation
+· The path number, from the sample or patient ID plus the year
+· The specimen date, rewritten day/month/year
+· The glycated haemoglobin. A run can print the same haemoglobin two or
+  three ways: the NGSP percentage, the IFCC figure in mmol/mol, an estimated
+  average glucose, and on some settings a second channel named HbA1c-2.
+  Only the NGSP percentage is reported. LabScribe picks it out by its unit
+  and the size of the figure, so it does not matter which name the analyser
+  gives it. If only the IFCC figure was printed, the percentage is worked out
+  from it with the IFCC/NGSP master equation and a note appears in the log.
+· The specimen on a glycated haemoglobin report is set to WHOLE BLOOD, even
+  when the analyser was told the sample was serum. A run that also carries
+  chemistry keeps whatever sample type the analyser gave.
+
+
+SETTINGS
+--------
+Click the laboratory name in the green bar to change the name printed at the
+top of reports, or the signature line at the foot.
+
+Settings menu:
+  · Laboratory name and signature, the same two boxes as above.
+  · Mark High and Low results in the FLAG column. Off by default, so the FLAG
+    column stays blank unless the analyser itself flagged the result.
+  · Reference intervals in use, which lists every interval reports are
+    printed against.
+  · Appearance, which is where the six window styles live:
+
+        Ghana Green      the GHS green, as it has always looked
+        Ink on Paper     off white with a serif face, like a worksheet
+        Midnight         dark, for late runs
+        Oxford Blue      navy and cool grey
+        Warm Clay        sand and burnt orange
+        Quiet Graphite   almost no colour, a plain grey program
+
+    Pick one from the list, or open "See them side by side" to compare them
+    with their colours shown. Whichever you choose is remembered, and it
+    changes the window only. Nothing on the printed report moves.
+
+Your settings are kept in:
+    C:\Users\<you>\AppData\Roaming\LabScribe\settings.txt
+
+
+WHAT IS AND IS NOT PRINTED
+--------------------------
+Anything the analyser measured that LabScribe does not recognise is collected
+into a final "OTHER INVESTIGATIONS" section, so a result is never quietly lost.
+
+That section is left off glycated haemoglobin reports, which are meant to be a
+single clean page. Anything left off is still listed in the window under the
+results for that file, so you can always see it.
+
+To leave it off every report, set SHOW_OTHER_SECTION to False near the top of
+LabScribe.py.
+
+
+CHANGING THE LOGO
+-----------------
+Put a PNG named  lab_logo.png  in the same folder as LabScribe.exe and it
+will be used instead of the Ghana Health Service logo.
+
+
+CHANGING A REFERENCE INTERVAL
+-----------------------------
+The intervals live in one place in LabScribe.py, the section headed
+"SECTION 5, TEST LIBRARY". Each test has a line beside "ref". Creatinine
+and uric acid are marked source_ref, which means the interval the analyser
+printed for that patient is used instead, with the one in the file as a
+fallback. After editing, the program has to be rebuilt to make a new .exe.
+
+
+IF SOMETHING GOES WRONG
+-----------------------
+"could not be read"     The PDF layout is not one LabScribe recognises.
+                        Open the file and check it is the analyser printout
+                        and not a scan.
+A test is missing       Its code is not in the list LabScribe knows. The code
+                        list is TEST_CODE_MAP in LabScribe.py.
+Wrong patient details   Type over them before generating. The report uses
+                        what is in the boxes, not what was in the PDF.
+
+Anything else, or a change you would like made, write or call:
+    abdulkhaliqsoule@gmail.com
+    +233 20 960 0338

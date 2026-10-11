@@ -1,0 +1,16 @@
+# Private / real patient material — never commit
+_private/
+*.original.pdf
+
+# Bundled third-party installer and build output
+Adobe Acrobat Pro DC*/
+Older versions/
+*.exe
+build/
+dist/
+*.spec
+
+# Python
+__pycache__/
+*.py[cod]
+test_out/
